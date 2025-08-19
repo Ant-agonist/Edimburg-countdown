@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lecteur MP3 avec image</title>
+  <style>
+    :root {
+      --bg: #0f172a;        /* slate-900 */
+      --panel: #111827;     /* gray-900 */
+      --muted: #94a3b8;     /* slate-400 */
+      --fg: #e5e7eb;        /* gray-200 */
+      --accent: #38bdf8;    /* sky-400 */
+      --border: #1f2937;    /* gray-800 */
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(56,189,248,.15), transparent),
+                  radial-gradient(800px 400px at 0% 110%, rgba(168,85,247,.12), transparent),
+                  var(--bg);
+      color: var(--fg);
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(900px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    header {
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17,24,39,.6);
+      backdrop-filter: blur(8px);
+    }
+    header h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+    header .hint { color: var(--muted); font-size: 13px; }
+
+    .content {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      padding: 24px;
+    }
+    @media (max-width: 780px) {
+      .content { grid-template-columns: 1fr; }
+    }
+
+    .art {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: repeating-conic-gradient(from 0deg, rgba(255,255,255,.04) 0 15deg, rgba(255,255,255,.02) 15deg 30deg);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .art img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .art .placeholder {
+      text-align: center; color: var(--muted);
+      padding: 10px; font-size: 14px; line-height: 1.4;
+    }
+
+    .controls {
+      display: grid; gap: 18px; align-content: start;
+    }
+
+    .row { display: grid; gap: 8px; }
+    label { font-size: 14px; color: var(--muted); }
+
+    .file {
+      position: relative;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,.02);
+    }
+    .file input[type="file"] {
+      width: 100%; height: 44px; opacity: 0; position: absolute; inset: 0; cursor: pointer;
+    }
+    .file .ui {
+      height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px;
+      color: var(--fg);
+    }
+    .file .name { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    audio { width: 100%; }
+
+    .tip { font-size: 12px; color: var(--muted); }
+    .accent { color: var(--accent); }
+    .btn {
+      display: inline-flex; gap: 8px; align-items: center; justify-content: center;
+      height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(56,189,248,.1);
+      color: var(--fg); cursor: pointer; user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="region" aria-label="Lecteur audio avec image">
+    <header>
+      <h1>Lecteur MP3 avec image</h1>
+      <div class="hint">Ajoutez un <span class="accent">.mp3</span> et une image (JPG/PNG/WebP).</div>
+    </header>
+
+    <div class="content">
+      <!-- Pochette / image -->
+      <figure class="art" aria-label="Illustration de la piste">
+        <img id="cover" alt="Image de couverture" />
+        <figcaption class="placeholder" id="coverHint">
+          Aucune image sélectionnée.<br />
+          Cliquez ci‑dessous pour en choisir une.
+        </figcaption>
+      </figure>
+
+      <!-- Contrôles et lecteur -->
+      <div class="controls">
+        <div class="row">
+          <label for="audioInput">Fichier audio (.mp3)</label>
+          <div class="file">
+            <input id="audioInput" type="file" accept="audio/mpeg,audio/mp3" />
+            <div class="ui"><span>Choisir un fichier</span><span class="name" id="audioName">Aucun fichier choisi</span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="imageInput">Image (JPG, PNG, WebP)</label>
+          <div class="file">
+            <input id="imageInput" type="file" accept="image/*" />
+            <div class="ui"><span>Choisir une image</span><span class="name" id="imageName">Aucune image choisie</span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Lecture</label>
+          <audio id="player" controls preload="metadata">
+            Votre navigateur ne supporte pas la balise audio.
+          </audio>
+        </div>
+
+        <div class="row">
+          <button class="btn" id="clearBtn" type="button">Réinitialiser</button>
+          <span class="tip">Astuce: vous pouvez glisser‑déposer un MP3 directement sur la page.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const player = $('#player');
+    const audioInput = $('#audioInput');
+    const imageInput = $('#imageInput');
+    const audioName = $('#audioName');
+    const imageName = $('#imageName');
+    const cover = $('#cover');
+    const coverHint = $('#coverHint');
+    const clearBtn = $('#clearBtn');
+
+    let audioURL, imageURL;
+
+    function setAudio(file) {
+      if (!file) return;
+      if (audioURL) URL.revokeObjectURL(audioURL);
+      audioURL = URL.createObjectURL(file);
+      player.src = audioURL;
+      audioName.textContent = file.name;
+    }
+
+    function setImage(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) return alert('Le fichier sélectionné n\'est pas une image.');
+      if (imageURL) URL.revokeObjectURL(imageURL);
+      imageURL = URL.createObjectURL(file);
+      cover.src = imageURL;
+      cover.style.display = 'block';
+      coverHint.style.display = 'none';
+      imageName.textContent = file.name;
+    }
+
+    audioInput.addEventListener('change', (e) => setAudio(e.target.files[0]));
+    imageInput.addEventListener('change', (e) => setImage(e.target.files[0]));
+
+    // Drag & drop du MP3
+    document.addEventListener('dragover', (e) => { e.preventDefault(); });
+    document.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const file = [...(e.dataTransfer?.files || [])].find(f => f.type === 'audio/mpeg' || f.name.toLowerCase().endsWith('.mp3'));
+      if (file) setAudio(file);
+    });
+
+    // Bouton reset
+    clearBtn.addEventListener('click', () => {
+      if (audioURL) URL.revokeObjectURL(audioURL);
+      if (imageURL) URL.revokeObjectURL(imageURL);
+      player.removeAttribute('src');
+      player.load();
+      audioInput.value = '';
+      imageInput.value = '';
+      audioName.textContent = 'Aucun fichier choisi';
+      imageName.textContent = 'Aucune image choisie';
+      cover.removeAttribute('src');
+      cover.style.display = 'none';
+      coverHint.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
