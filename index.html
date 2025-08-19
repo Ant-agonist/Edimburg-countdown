@@ -104,6 +104,26 @@
       width:100%; border-radius:12px; outline:none;
     }
 
+    /* Nouveau style pour le bouton Télécharger */
+    .download-btn{
+      display:inline-block;
+      margin-top:10px;
+      padding:8px 16px;
+      border-radius:12px;
+      background:var(--accent);
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-align:center;
+      width:max-content;
+    }
+
+    .download-btn:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
     footer{
       margin-top:18px; opacity:.75; font-size:.9rem; text-align:right;
     }
@@ -132,6 +152,7 @@
         <source src="Jour 1.mp3" type="audio/mpeg" />
         Votre navigateur ne supporte pas la balise audio.
       </audio>
+      <a href="Jour 1.mp3" download class="download-btn">⬇ Télécharger</a>
     </section>
 
     <footer>
