@@ -1,4 +1,4 @@
-mb<!doctype html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -7,82 +7,122 @@ mb<!doctype html>
   <meta name="description" content="Premier jour" />
   <style>
     :root{
-      --bg:#0f1220;/* arrière-plan */
-      --panel:#1a1f36;/* carte */
-      --text:#eef2ff;/* texte */
-      --muted:#a5b4fc;/* accent doux */
+      --bg:#0f1220;       /* arrière-plan */
+      --panel:#1a1f36;    /* carte */
+      --text:#eef2ff;     /* texte */
+      --muted:#a5b4fc;    /* accent doux */
+      --accent:#7f5af0;   /* accent violet */
+      --shadow:rgba(0,0,0,0.35);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+
+    *{box-sizing:border-box; margin:0; padding:0;}
+    html, body{height:100%; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans"; color:var(--text);}
     body{
-      margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
       background: radial-gradient(1200px 800px at 20% 10%, #1f2547 0%, var(--bg) 60%), var(--bg);
-      color:var(--text);
       display:grid; place-items:center; padding:24px;
     }
+
     .card{
       width:min(900px, 100%);
-      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      backdrop-filter: blur(6px);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius:24px; padding:28px; box-shadow:0 10px 30px rgba(0,0,0,0.35);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      backdrop-filter: blur(10px);
+      border-radius:28px;
+      padding:32px;
+      border:1px solid rgba(255,255,255,0.1);
+      box-shadow:0 20px 40px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .card:hover{
+      transform: translateY(-6px);
+      box-shadow:0 25px 50px var(--shadow);
+    }
+
     header{
-      display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:18px;
+      display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:24px;
     }
-    .dot{width:10px; height:10px; border-radius:50%; background:var(--muted); box-shadow:0 0 32px var(--muted)}
-    h1{margin:0; font-size:clamp(22px, 3vw, 36px)}
 
-   .cover{
-  width:100%; 
-  border-radius:18px; 
-  overflow:hidden; 
-  border:1px solid rgba(255,255,255,0.12);
-  background:#0b0e1a; 
-  display:grid; 
-  place-items:center; 
-  margin-bottom:16px;
-}
+    .dot{
+      width:12px; height:12px; border-radius:50%; background:var(--accent);
+      box-shadow: 0 0 20px var(--accent);
+    }
 
-.cover img{
-  width:100%; 
-  height:auto;        /* garde le ratio naturel */
-  object-fit:contain; /* affiche l'image entière */
-  display:block;
-}
+    h1{
+      font-size:clamp(24px, 4vw, 42px);
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    .cover{
+      width:100%; 
+      border-radius:20px; 
+      overflow:hidden; 
+      border:1px solid rgba(255,255,255,0.1);
+      background:#0b0e1a; 
+      display:grid; 
+      place-items:center; 
+      margin-bottom:20px;
+      transition: transform 0.3s ease;
+    }
+
+    .cover img{
+      width:100%; 
+      height:auto;
+      object-fit:contain;
+      display:block;
+      transition: transform 0.4s ease;
+    }
+
+    .cover:hover img{
+      transform: scale(1.05);
+    }
 
     .player{
-      display:flex; flex-direction:column; gap:10px; 
-      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
-      padding:14px; border-radius:14px;
+      display:flex; flex-direction:column; gap:12px; 
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.12);
+      padding:16px; border-radius:16px;
+      transition: background 0.3s ease;
     }
-    .meta{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .title{font-weight:700}
-    .hint{opacity:.8; font-size:.9rem}
 
-    audio{width:100%}
-    footer{margin-top:14px; opacity:.75; font-size:.9rem}
-    a{color:var(--muted); text-decoration:none}
-    a:hover{text-decoration:underline}
+    .player:hover{
+      background: rgba(255,255,255,0.08);
+    }
+
+    .meta{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+
+    .title{
+      font-weight:700; font-size:1.1rem;
+    }
+
+    .hint{
+      opacity:.8; font-size:.9rem;
+    }
+
+    audio{
+      width:100%; border-radius:12px; outline:none;
+    }
+
+    footer{
+      margin-top:18px; opacity:.75; font-size:.9rem; text-align:right;
+    }
+
+    a{color:var(--accent); text-decoration:none;}
+    a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
   <main class="card" role="main">
     <header>
       <span class="dot" aria-hidden="true"></span>
-      <!-- 1) MODIFIEZ ICI : le titre qui s'affiche en haut -->
       <h1 id="page-title">Edinburgh Countdown</h1>
     </header>
 
-    <!-- 2) MODIFIEZ ICI : l'image de couverture
-         Placez votre image (ex: cover.jpg ou cover.png) dans le même dossier que index.html
-         puis changez l'attribut src ci-dessous -->
     <figure class="cover">
       <img src="Day One.png" alt="Day One" id="cover" />
     </figure>
 
-    <!-- 3) MODIFIEZ ICI : le lecteur audio
-         Placez votre fichier audio (ex: musique.mp3) dans le même dossier et changez src -->
     <section class="player">
       <div class="meta">
         <div class="title" id="track-title">Jour 1</div>
@@ -95,16 +135,13 @@ mb<!doctype html>
     </section>
 
     <footer>
-      <!-- Optionnel : votre nom / lien -->
       <span>© Doudoudou Pipoupou</span>
     </footer>
   </main>
 
-  <!-- Petit script pour synchroniser le <title> de l'onglet et les textes -->
   <script>
     const pageTitle = document.getElementById('page-title');
     const trackTitle = document.getElementById('track-title');
-    // Quand vous modifiez le H1 dans le HTML, ce script copie le texte ailleurs
     document.title = pageTitle.textContent.trim() || 'Ma musique';
     trackTitle.textContent = pageTitle.textContent.trim();
   </script>
